@@ -1,0 +1,138 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="static/style.css"> 
+    <div class="logo">
+        <h1>LlamaStocks</h1>
+    
+    </div> 
+        <nav id="site-nav">
+            <div id="menu-container">
+                <ul id="primary-menu">
+                    <li class="nav-menu" id="menu-1">
+                        <a href='index.html'>
+                            Inicio
+                        </a>
+                    </li>
+                    <li class="nav-menu" id="menu-2">
+                        <a class="active" href='simulator.html'>
+                            Simulador
+                        </a>
+                    </li>
+                    <li class="nav-menu" id="menu-3">
+                        <a href='donations.html'>
+                            Donaciones
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+</head>
+<script type="text/Javascript">
+    function calculate() {
+        var stock=document.getElementById("stock").value;
+        var p=document.getElementById("pcompra").value;
+        var sab=document.getElementById("sab").value;
+        var minSAB=document.getElementById("minsab").value;
+        var capital=document.getElementById("capital").value;
+        
+        p=parseFloat(p)
+        sab=parseFloat(sab)
+        minSAB=parseFloat(minSAB)
+        capital=parseFloat(capital)
+        console.log(stock,p,sab,minSAB,capital)
+
+        const fg=0.000075
+        const smv=0.000135
+        const igv=0.18
+        var minCAV=5 
+
+        var IBGC=["ALICORC1","ALICORI1","BBVAC1","CPACASC1","CPAC",
+        "BUENAVC1","BVN","ENGIEC1","FERREYC1","INRETC1","IFS","RIMSEGC1"
+        ]
+
+        Array.prototype.contains=function(obj){
+            var i=this.length;
+            while (i--){
+                if (this[i]===obj){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if (IBGC.contains(stock)==true){
+            var cavali=0.00004095;
+            var bvl=0.000021
+        }else{
+            var cavali=0.0004095;
+            var bvl=0.00021
+        }
+
+        var caso1=(capital*p*sab)/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv+(1+igv)*sab+(1+igv)*cavali))
+        var caso2=(capital*p*cavali)/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv+(1+igv)*sab+(1+igv)*cavali))
+
+        if (caso1>minSAB && caso2>minCAV){
+            var acciones=capital/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv+(1+igv)*sab+(1+igv)*cavali));
+            var acciones=Math.round(acciones-0.5);
+            
+        }
+
+        var caso3=(sab*p*(capital-(1+igv)*(minSAB)))/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv+(1+igv)*cavali))
+        var caso4=(cavali*p*(capital-(1+igv)*(minSAB)))/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv+(1+igv)*cavali))
+
+        if (caso3<minSAB && caso4>minCAV){
+            var acciones=(capital-(1+igv)*minSAB)/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv+(1+igv)*cavali));
+            var acciones=Math.round(acciones-0.5);
+            
+        }
+        var caso5=(sab*p*(capital-(1+igv)*(minCAV)))/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv+(1+igv)*sab))
+        var caso6=(cavali*p*(capital-(1+igv)*(minCAV)))/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv+(1+igv)*sab))
+
+        if (caso5>minSAB && caso6<minCAV){
+            var acciones=(capital-(1+igv)*(minCAV))/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv+(1+igv)*sab));
+            var acciones=Math.round(acciones-0.5);
+            
+        }
+        var caso7=(sab*p*(capital-(1+igv)*(minSAB+minCAV)))/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv))
+        var caso8=(cavali*p*(capital-(1+igv)*(minSAB+minCAV)))/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv))
+
+        if (caso7<minSAB && caso8<minCAV){
+            var acciones=(capital-(1+igv)*(minSAB+minCAV))/(p*(1+(1+igv)*bvl+(1+igv)*fg+smv));
+            var acciones=Math.round(acciones-0.5);
+            
+        }     
+
+
+        document.getElementById("result").innerHTML="Puedes comprar "+acciones+" acciones de "+stock;
+    }
+</script>
+
+
+<div>
+    <h5>Calculadora de acciones BVL</h5>
+    <p>Utiliza esta calculadora para sacar cuántas acciones obtendrías con el capital que deseas</p>
+    <form name="myform" method="POST">
+        <label for="stock">Acción: </label><br>
+        <input type="text" id="stock" name="stock"><br>
+        <label for="pcompra">Precio de Compra: </label><br>
+        <input type="number" id="pcompra" name="pcompra"><br>
+        <label for="sab">Comisión SAB (%): </label><br>
+        <input type="number" id="sab" name="sab"><br>
+        <label for="minsab">Comisión mínima SAB: </label><br>
+        <input type="number" id="minsab" name="minsab"><br>
+        <label for="capital">Monto a Invertir: </label><br>
+        <input type="number" id="capital" name="capital"><br><br>
+        
+
+        <input type="submit" onclick="calculate(); return false" value="Calcular">
+    </form>
+</div>
+
+<p id="result"></p>
+<footer>
+    <div>
+        <p>LlamaStocks, Herramientas informativas para todos</p>
+    </div>
+</footer>
+</html>
