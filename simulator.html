@@ -29,6 +29,7 @@
             </div>
         </nav>
 </head>
+
 <script type="text/Javascript">
     function calculate() {
         var stock=document.getElementById("stock").value;
@@ -103,16 +104,39 @@
             var acciones=Math.round(acciones-0.5);
             
         }     
+        
+        var invertido=+((p*acciones).toFixed(2));
 
+        if (capital*sab>minSAB){
+            var comision=+((capital*sab).toFixed(2));
+        }else{
+            var comision=minSAB;
+        }
 
-        document.getElementById("result").innerHTML="Puedes comprar "+acciones+" acciones de "+stock;
+        var comision_bvl=+((p*acciones*bvl).toFixed(2));
+        var comision_fg=+((p*acciones*fg).toFixed(2));
+        var comision_smv=+((p*acciones*smv).toFixed(2));
+
+        if (capital*cavali>minCAV){
+            var comision_cavali=+((capital*cavali).toFixed(2));
+        }else{
+            var comision_cavali=minCAV;
+        }
+
+        var comision_igv=+(((comision+comision_bvl+comision_fg+comision_cavali)*igv).toFixed(2)); 
+        
+        var total=+((invertido+comision+comision_bvl+comision_fg+comision_smv+comision_cavali+comision_igv).toFixed(2));
+        var saldo=+((capital-total).toFixed(2));
+
+        document.getElementById("result").innerHTML="Puedes comprar "+acciones+" acciones de "+stock+"<br>Monto Invertido: "+invertido+"<br> Comisión SAB: "+comision+"<br> Comisión BVL: "+comision_bvl+"<br> Fondo de Garantía: "+comision_fg+"<br> Comisión SMV: "+comision_smv+"<br> Comisión CAVALI: "+comision_cavali+"<br> IGV: "+comision_igv+"<br> Monto Invertido: "+total+"<br> Saldo: "+saldo;
     }
 </script>
 
-
-<div>
-    <h5>Calculadora de acciones BVL</h5>
-    <p>Utiliza esta calculadora para sacar cuántas acciones obtendrías con el capital que deseas</p>
+<h5>Calculadora de acciones BVL</h5>
+<p>Utiliza esta calculadora para sacar cuántas acciones obtendrías con el capital que deseas</p>
+<div id="calculadora-compra">
+    <div id="calculadora">
+    
     <form name="myform" method="POST">
         <label for="stock">Acción: </label><br>
         <input type="text" id="stock" name="stock"><br>
@@ -127,10 +151,44 @@
         
 
         <input type="submit" onclick="calculate(); return false" value="Calcular">
+        <input type="reset" value="Borrar">
     </form>
+    </div>
+    <div id="resultados">
+        <p id="result"></p>
+    </div>
 </div>
 
-<p id="result"></p>
+
+
+<div class="indicaciones">
+        <h5>
+            Indicaciones:
+        </h5>
+        <p>
+            En "Acción" debes colocar el Ticker de la acción. Por ejemplo, para Empresa Siderúrgica del Perú S.A.A., debes colocar su Ticker SIDERC1. Para cada Ticker, puedes buscar en el siguiente <a href="https://www.bvl.com.pe/emisores/listado-emisores">link</a>.
+        </p>
+        <p>
+            En precio de compra debes colocar el precio al que planeas comprar la Acción
+        </p>
+        <p>
+        En "Comisión SAB(%)" y "Comisión Fija", debes colocar las tarifas de tu Sociedad Agente de Bolsa. Si ya estás afiliado a una, debes poner las comisiones pactadas con ellos. En caso de no ser asi, te invito a averiguar las comisiones de las SABs afiliadas a la Bolsa de valores de Lima <a href="https://www.bvl.com.pe/mercado/agentes/valores">aquí</a>.
+        Cada una tiene una sección de Tarifarios en su sitio web y fija las comisiones de acuerdo al nivel de servicio que ofrece, el monto a invertir y el tipo de cliente.
+        La comisión que se cobra es el monto mayor entre la comisión porcentual y la comisión fija.
+        </p>
+            <h5>Por ejemplo:</h5>
+        <p>Una SAB cobra 1% de comisión porcentual y 50 soles de comisión fija. Si decides meter S/4,000 soles en la bolsa, entonces la SAB te cobrará S/50 al ser mayor que la comisión porcentual (4,000 x 1%=S/40).
+        </p>
+        <p>
+            Si decides invertir S/6,000, entonces la SAB te cobrará S/60 (S/6,000 x 1%) pues reulta mayor a la comisión fija de S/50.
+        </p>
+        <p>
+            Finalmente, el monto a invertir es el monto que decides transar con la SAB para comprar la acción. Este puede ser en soles o dólares. Por ahora, la calculadora es bastante precisa para las transacciones en soles. Próximamente incluiremos las transacciones en dólares.
+        </p>
+</div>
+
+
+
 <footer>
     <div>
         <p>LlamaStocks, Herramientas informativas para todos</p>
