@@ -111,30 +111,30 @@
             var precio_minimo=Math.ceil(precio_minimo*100)/100;
         }     
         
-        var invertido=+((p*acciones).toFixed(2));
+        var invertido=p*acciones;
 
-        if (capital*sab>minSAB){
-            var comision=+((capital*sab).toFixed(2));
+        if (invertido*sab>minSAB){
+            var comision=invertido*sab;
         }else{
             var comision=minSAB;
         }
 
-        var comision_bvl=+((p*acciones*bvl).toFixed(2));
-        var comision_fg=+((p*acciones*fg).toFixed(2));
-        var comision_smv=+((p*acciones*smv).toFixed(2));
+        var comision_bvl=p*acciones*bvl;
+        var comision_fg=p*acciones*fg;
+        var comision_smv=p*acciones*smv;
 
-        if (capital*cavali>minCAV){
-            var comision_cavali=+((capital*cavali).toFixed(2));
+        if (invertido*cavali>minCAV){
+            var comision_cavali=invertido*cavali;
         }else{
             var comision_cavali=minCAV;
         }
 
-        var comision_igv=+(((comision+comision_bvl+comision_fg+comision_cavali)*igv).toFixed(2)); 
+        var comision_igv=(comision+comision_bvl+comision_fg+comision_cavali)*igv; 
         
-        var total=+((invertido+comision+comision_bvl+comision_fg+comision_smv+comision_cavali+comision_igv).toFixed(2));
-        var saldo=+((capital-total).toFixed(2));
+        var total=invertido+comision+comision_bvl+comision_fg+comision_smv+comision_cavali+comision_igv;
+        var saldo=capital-total;
 
-        document.getElementById("result").innerHTML="Puedes comprar "+acciones+" acciones de "+stock+"<br>Monto Invertido: "+invertido+"<br> Comisión SAB: "+comision+"<br> Comisión BVL: "+comision_bvl+"<br> Fondo de Garantía: "+comision_fg+"<br> Comisión SMV: "+comision_smv+"<br> Comisión CAVALI: "+comision_cavali+"<br> IGV: "+comision_igv+"<br> Monto Transado: "+total+"<br> Saldo: "+saldo+"<br> Requieres que el precio suba a "+precio_minimo+" para recuperar tu capital.";
+        document.getElementById("result").innerHTML="Puedes comprar "+acciones+" acciones de "+stock+"<br>Monto Invertido: "+invertido.toFixed(2)+"<br> Comisión SAB: "+comision.toFixed(2)+"<br> Comisión BVL: "+comision_bvl.toFixed(2)+"<br> Fondo de Garantía: "+comision_fg.toFixed(2)+"<br> Comisión SMV: "+comision_smv.toFixed(2)+"<br> Comisión CAVALI: "+comision_cavali.toFixed(2)+"<br> IGV: "+comision_igv.toFixed(2)+"<br> Monto Transado: "+total.toFixed(2)+"<br> Saldo: "+saldo.toFixed(2)+"<br> Requieres que el precio suba a "+precio_minimo+" para recuperar tu capital.";
     }
 </script>
 
