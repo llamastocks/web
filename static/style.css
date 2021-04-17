@@ -117,10 +117,14 @@ div#calculadora-compra{
 }
 
 div#calculadora{
-    flex: 0 0 65;
+    /*flex: 0 0 65;*/
     margin-left: 5%;
 }
 
 div#resultados{
     flex:1;
+}
+
+select,input{
+    width:150px;
 }

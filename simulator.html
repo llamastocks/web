@@ -29,8 +29,25 @@
             </div>
         </nav>
 </head>
+<script id="ic-api" src="https://t60692c4364c5750009bef1b9.projects.ideascloud.io/api.js"></script>
 
 <script type="text/Javascript">
+    icAPI.callService('getStocks',{},function(error,response){
+        if (error){
+            console.log('Error:',error);
+            return;
+        }
+        console.log(response.responseJSON)
+        var stockSelectElement = document.getElementById("stock");
+        var stocksList=response.responseJSON;
+        stocksList.forEach(function (stock) {
+            var stockOptionElement=document.createElement("option");
+            stockOptionElement.value=stock.ticker;
+            stockOptionElement.innerHTML=stock.emisor;
+            stockSelectElement.appendChild(stockOptionElement);
+        })
+    })
+
     function calculate() {
         var stock=document.getElementById("stock").value;
         var p=document.getElementById("pcompra").value;
@@ -133,7 +150,7 @@
         
         var total=invertido+comision+comision_bvl+comision_fg+comision_smv+comision_cavali+comision_igv;
         var saldo=capital-total;
-
+        console.log(acciones,stock,invertido,comision)
         document.getElementById("result").innerHTML="Puedes comprar "+acciones+" acciones de "+stock+"<br>Monto Invertido: "+invertido.toFixed(2)+"<br> Comisión SAB: "+comision.toFixed(2)+"<br> Comisión BVL: "+comision_bvl.toFixed(2)+"<br> Fondo de Garantía: "+comision_fg.toFixed(2)+"<br> Comisión SMV: "+comision_smv.toFixed(2)+"<br> Comisión CAVALI: "+comision_cavali.toFixed(2)+"<br> IGV: "+comision_igv.toFixed(2)+"<br> Monto Transado: "+total.toFixed(2)+"<br> Saldo: "+saldo.toFixed(2)+"<br> Requieres que el precio suba a "+precio_minimo+" para recuperar tu capital.";
     }
 </script>
@@ -145,7 +162,12 @@
     
     <form name="myform" method="POST">
         <label for="stock">Acción: </label><br>
-        <input type="text" id="stock" name="stock"><br>
+        <!-- <select type="text" id="stock" name="stock"><br> -->
+        <select id="stock">
+            <option value="">
+                Elige una acción:
+            </option>
+        </select><br>
         <label for="pcompra">Precio de Compra: </label><br>
         <input type="number" id="pcompra" name="pcompra"><br>
         <label for="sab">Comisión SAB (%): </label><br>
