@@ -43,10 +43,21 @@
         stocksList.forEach(function (stock) {
             var stockOptionElement=document.createElement("option");
             stockOptionElement.value=stock.ticker;
-            stockOptionElement.innerHTML=stock.emisor;
+            stockOptionElement.innerHTML=stock.emisor+" - "+stock.ticker+" - "+stock.moneda;
             stockSelectElement.appendChild(stockOptionElement);
         })
     })
+
+    function tipoMoneda() {
+        var str=document.getElementById("stock").innerHTML;
+        console.log(str)
+        if (str.includes("soles")){
+            document.getElementById("mincav").value=5;
+        }else{
+            document.getElementById("mincav").value=1.39;
+        }
+        
+    }
 
     function calculate() {
         var stock=document.getElementById("stock").value;
@@ -178,7 +189,7 @@
         <input type="number" id="mincav" name="mincav"><br>  
         <label for="capital">Monto a Invertir: </label><br>
         <input type="number" id="capital" name="capital"><br><br>
-      
+        
 
         <input type="submit" onclick="calculate(); return false" value="Calcular">
         <input type="reset" value="Borrar">
