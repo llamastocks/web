@@ -42,42 +42,52 @@
         var stocksList=response.responseJSON;
         stocksList.forEach(function (stock) {
             var stockOptionElement=document.createElement("option");
-            stockOptionElement.value=stock.ticker;
+            stockOptionElement.value=stock.ticker+"-"+stock.moneda;
             stockOptionElement.innerHTML=stock.emisor+" - "+stock.ticker+" - "+stock.moneda;
             stockSelectElement.appendChild(stockOptionElement);
         })
     })
 
     function tipoMoneda() {
-        var str=document.getElementById("stock").innerHTML;
+        var str=document.getElementById("stock").value.split("-")[1];
         console.log(str)
         if (str.includes("soles")){
-            document.getElementById("mincav").value=5;
+
+            document.getElementById("tc").readOnly=true;
+
         }else{
-            document.getElementById("mincav").value=1.39;
+
+            document.getElementById("tc").readOnly=false;
+
         }
         
     }
 
     function calculate() {
-        var stock=document.getElementById("stock").value;
+        var stock=document.getElementById("stock").value.split("-")[0];
         var p=document.getElementById("pcompra").value;
         var sab=document.getElementById("sab").value;
         var minSAB=document.getElementById("minsab").value;
         var capital=document.getElementById("capital").value;
-        var minCAV=document.getElementById("mincav").value;
+        var tc=document.getElementById("tc").value;
         
         p=parseFloat(p)
         sab=parseFloat(sab)
         minSAB=parseFloat(minSAB)
         capital=parseFloat(capital)
-        minCAV=parseFloat(minCAV)
+        tc=parseFloat(tc)
         console.log(stock,p,sab,minSAB,capital)
 
         const fg=0.000075
         const smv=0.000135
         const igv=0.18
         
+        var moneda=document.getElementById("stock").value.split("-")[1];
+        if (moneda=="soles"){
+            minCAV=5
+        }else{
+            minCAV=5/tc
+        }
 
         var IBGC=["ALICORC1","ALICORI1","BBVAC1","CPACASC1","CPAC",
         "BUENAVC1","BVN","ENGIEC1","FERREYC1","INRETC1","IFS","RIMSEGC1"
@@ -174,7 +184,7 @@
     <form name="myform" method="POST">
         <label for="stock">Acción: </label><br>
         <!-- <select type="text" id="stock" name="stock"><br> -->
-        <select id="stock">
+        <select id="stock" onchange="tipoMoneda()">
             <option value="">
                 Elige una acción:
             </option>
@@ -184,12 +194,11 @@
         <label for="sab">Comisión SAB (%): </label><br>
         <input type="number" id="sab" name="sab"><br>
         <label for="minsab">Comisión mínima SAB: </label><br>
-        <input type="number" id="minsab" name="minsab"><br>
-        <label for="mincav">Comisión mínima CAVALI: </label><br>
-        <input type="number" id="mincav" name="mincav"><br>  
+        <input type="number" id="minsab" name="minsab"><br> 
         <label for="capital">Monto a Invertir: </label><br>
-        <input type="number" id="capital" name="capital"><br><br>
-        
+        <input type="number" id="capital" name="capital"><br>
+        <label for="tc" id="tc_label">Tipo de Cambio: </label><br>
+        <input type="number" id="tc" name="tc"><br><br>
 
         <input type="submit" onclick="calculate(); return false" value="Calcular">
         <input type="reset" value="Borrar">
@@ -207,10 +216,10 @@
             Indicaciones:
         </h5>
         <p>
-            En "Acción" debes colocar el Ticker de la acción. Por ejemplo, para Empresa Siderúrgica del Perú S.A.A., debes colocar su Ticker SIDERC1. Para cada Ticker, puedes buscar en el siguiente <a href="https://www.bvl.com.pe/emisores/listado-emisores">link</a>.
+            En "Acción" debes elegir la acción que deseas adquirir, recuerda que una empresa puede tener más de una acción. Para cada Acción hemos colocado la empresa emisora, el ticker de esta acción y en qué moneda fue emitida. Para mayor información, puedes buscar en el siguiente <a href="https://www.bvl.com.pe/emisores/listado-emisores">link</a>.
         </p>
         <p>
-            En "Precio de compra" debes colocar el precio al que planeas comprar la Acción
+            En "Precio de compra" debes colocar el precio al que planeas comprar la Acción.
         </p>
         <p>
         En "Comisión SAB(%)" y "Comisión Fija", debes colocar las tarifas de tu Sociedad Agente de Bolsa. Si ya estás afiliado a una, debes poner las comisiones pactadas con ellos. En caso de no ser asi, te invito a averiguar las comisiones de las SABs afiliadas a la Bolsa de valores de Lima <a href="https://www.bvl.com.pe/mercado/agentes/listado">aquí</a>.
@@ -218,16 +227,16 @@
         La comisión que se cobra es el monto mayor entre la comisión porcentual y la comisión fija. Para la calculadora, colocar la comisión porcentual como decimales; es decir, si la comisión es 1%, colocarlo como 0.01.
         </p>
         <p>
-            En "Comisión mínima CAVALI" debes colocar 5 pues es la comisión mínima que te cobra el sistema CAVALI por la operación bursátil. Líneas abajo les explicaremos porque poner esta constante.
+            En "Tipo de cambio" debes colocar el tipo de cambio fijado con la SAB para convertir su comisión a dólares. Esta información solo será activada cuando la acción fue emitida en dólares.
         </p>
             <h5>Ejemplo:</h5>
-        <p>Una SAB cobra 1% de comisión porcentual y 50 soles de comisión fija. Si decides meter S/4,000 soles en la bolsa, entonces la SAB te cobrará S/50 al ser mayor que la comisión porcentual (4,000 x 1%=S/40). Sumado a ello, tu comisión por CAVALI será S/5 pues no supera el monto mínimo de inversión para cobrarte más de 5.
+        <p>Una SAB cobra 1% de comisión porcentual y 50 soles de comisión fija. Si decides meter S/4,000 soles en la bolsa, entonces la SAB te cobrará S/50 al ser mayor que la comisión porcentual (4,000 x 1%=S/40).
         </p>
         <p>
-            Si decides invertir S/6,000, entonces la SAB te cobrará S/60 (S/6,000 x 1%) pues resulta mayor a la comisión fija de S/50. Tu comisión CAVALI seguirá siendo S/5.
+            Si decides invertir S/6,000, entonces la SAB te cobrará S/60 (S/6,000 x 1%) pues resulta mayor a la comisión fija de S/50.
         </p>
         <p>
-            Finalmente, el "Monto a Invertir" es el monto que decides transar con la SAB para comprar la acción. Este puede ser en soles o dólares dependiendo en qué moneda cotiza la acción. Para el cálculo de acciones cotizadas en dólares, debes cambiar las variables constantes a dólares. Es decir, si el TC es 3.6, entonces debes cambiar la "Comisión mínima SAB" y la "Comisión mínima CAVALI" a dólares. Siguiendo el ejemplo anterior, la Comisión mínima SAB sería 50/3.6=U$13.89 y la Comisión mínima CAVALI sería 5/3.6=U$1.39 aproximadamente. Por ahora no recomendamos colocar capital en soles para acciones en dólares y viceversa. Con el paso del tiempo iremos sofisticando las funciones de la calculadora.
+            Finalmente, el "Monto a Invertir" es el monto que decides transar con la SAB para comprar la acción. Este puede ser en soles o dólares dependiendo en qué moneda cotiza la acción. Si la acción es emitida en dólares, la "Comisión mínima" debe ser en dólares con el "Tipo de Cambio" elegido.
         </p>
 </div>
 
